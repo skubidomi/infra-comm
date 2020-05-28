@@ -14,6 +14,8 @@ int main(void)
 	DDRD |= (1 << DDD6); // data direction register for IR LED
 	DDRB |= (1 << DDB5); // internalLED
 	
+	DDRD &= ~(1 << DDD7); // data direction register for the receiver, input is like a button with pull up resistor
+	
 	PWM_Init();
 	Timer_Init();
 	UART_Init();
@@ -25,7 +27,11 @@ int main(void)
 	IR_SendCode(0x20df10ef);
     while (1) 
     {
-		
+		if(!(PIND & (1 << PIND7)))
+		{
+			INTERNAL_LED_TOGGLE;
+			serialWrite("now");
+		}
     }
 }
 
