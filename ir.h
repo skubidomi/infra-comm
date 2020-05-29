@@ -27,7 +27,10 @@
 #define NEC_BITS 32
 
 void PWM_Init(void); // with timer0
-void Timer_Init(void); // with timer1
+void Timer1_Init(void); // with timer1
 void IR_SendCode(uint32_t code);
+
+void Timer2_Init(void); // for reading the receiver
+void Receiver_Init(void);
 
 #endif /* IR_H_ */

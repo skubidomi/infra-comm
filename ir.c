@@ -30,7 +30,7 @@ void PWM_StopToggling(void)
 	LED_OFF;
 }
 
-void Timer_Init(void)
+void Timer1_Init(void)
 {
 	// timer1
 	TCCR1B |= (1 << WGM12); // CTC mode
@@ -83,13 +83,13 @@ void IR_SendCode(uint32_t code)
 	c[0] = burst_counter;
 	c[1] = '\0';
 	//serialWrite("Leading pulse: ");
-	serialWrite(c);
+	//serialWrite(c);
 
 	IR_CarrierOFF(NEC_LEADING_SPACE);
 
 	c[0] = burst_counter;
 	c[1] = '\0';
-	serialWrite(c);
+	//serialWrite(c);
 
 	// send bits
 	for(i=0; i<NEC_BITS; i++)
@@ -98,7 +98,7 @@ void IR_SendCode(uint32_t code)
 
 		c[0] = burst_counter;
 		c[1] = '\0';
-		serialWrite(c);
+		//serialWrite(c);
 
 		if(code & 0x80000000) // get the current bit by masking all but MSB
 		{
@@ -106,7 +106,7 @@ void IR_SendCode(uint32_t code)
 
 			c[0] = burst_counter;
 			c[1] = '\0';
-			serialWrite(c);
+			//serialWrite(c);
 		}
 		else
 		{
@@ -114,7 +114,7 @@ void IR_SendCode(uint32_t code)
 
 			c[0] = burst_counter;
 			c[1] = '\0';
-			serialWrite(c);
+			//serialWrite(c);
 
 		}
 		code <<= 1;
@@ -122,6 +122,21 @@ void IR_SendCode(uint32_t code)
 	
 	// send single STOP bit
 	IR_CarrierON(NEC_PULSE);
+}
+
+void Receiver_Init(void)
+{ 
+	DDRD &= ~(1 << DDD2); // input for the ir receiver output pin
+	EIMSK |= (1 << INT0);// enable INT0 interrupt handler -> PORTD2 INPUT
+	EICRA |= (1 << ISC00);// trigger INT0 interrupt on raising and falling edge
+}
+
+void Timer2_Init(void)
+{
+	TCCR2A |= (1 << WGM21); // set timer2 to ctc
+	TCCR2B |= (1 << CS20); // set no prescaler
+	OCR2A = 209; // set timer frequency to get 38 kHz
+	TIMSK2 |= (1 << OCIE2A);// enable timer COMPA interrupt
 }
 
 ISR(TIMER0_COMPA_vect)
@@ -133,4 +148,15 @@ ISR(TIMER1_COMPA_vect)
 {
 	burst_counter++;
 	INTERNAL_LED_TOGGLE;
+}
+
+ISR(INT0_vect)
+{
+	serialWrite("k");
+	INTERNAL_LED_TOGGLE;
+}
+
+ISR(TIMER2_COMPA_vect)
+{
+	
 }
