@@ -14,6 +14,9 @@ int main(void)
 	DDRD |= (1 << DDD6); // data direction register for IR LED
 	DDRB |= (1 << DDB5); // internalLED
 	
+	// variables for the read data:
+	uint8_t addr, cmd;
+	
 	PWM_Init();
 	Timer1_Init();
 	UART_Init();
@@ -26,10 +29,25 @@ int main(void)
 	
 	// ToDo1: organize the ddr macros into the init functions, ir led pin, internal led pin, and button pin
 	// ToDo2: organize the init functions into a separate Init function here
+	// ToDo3: organize ir read and write function name convention 
 
-	IR_SendCode(0x20df10ef);
+	//IR_SendCode(0x20df10ef);
+	serialWrite("Init is done\r\n");
+	serialWriteNum(255);
     while (1) 
     {
+		if (IR_read(&addr, &cmd) == IR_SUCCESS)
+		{
+			serialWriteNum(addr);
+			serialWriteNum(cmd);
+			serialWrite("\r\n");
+			if(addr == 0xde || cmd == 0x6b){
+				serialWriteNum(addr);
+				serialWriteNum(cmd);
+				serialWrite("\r\n");
+			}
+			serialWrite("It works\r\n");
+		}
     }
 }
 
