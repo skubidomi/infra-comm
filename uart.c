@@ -45,6 +45,14 @@ void serialWrite(char c[])
 	}
 }
 
+void serialWriteNum(uint8_t num)
+{
+	char buff[8] = {0};
+	char *p = buff+7;
+	do { *(p--) = (num % 10) + '0'; num /= 10; } while(num);
+	serialWrite((char *)(p+1));
+}
+
 char getChar(void)
 {
 	char ret = '\0';

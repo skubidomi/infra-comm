@@ -23,6 +23,7 @@
 
 void UART_Init(void);
 void appendSerial(char c);
+void serialWriteNum(uint8_t num);
 void serialWrite(char c[]);
 char getChar(void);
 
