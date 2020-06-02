@@ -38,15 +38,16 @@ int main(void)
     {
 		if (IR_read(&addr, &cmd) == IR_SUCCESS)
 		{
-			serialWriteNum(addr);
+			/*serialWriteNum(addr);
 			serialWriteNum(cmd);
-			serialWrite("\r\n");
-			if(addr == 0xde || cmd == 0x6b){
-				serialWriteNum(addr);
+			serialWrite("\r\n");*/
+			if(addr == 0x20 && cmd == 0x10){
+				/*serialWriteNum(addr);
 				serialWriteNum(cmd);
-				serialWrite("\r\n");
+				serialWrite("\r\n");*/
+				INTERNAL_LED_TOGGLE;
 			}
-			serialWrite("It works\r\n");
+			//serialWrite("It works\r\n");
 		}
     }
 }
