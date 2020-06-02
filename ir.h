@@ -51,6 +51,6 @@ void IR_SendCode(uint32_t code);
 void Timer2_Init(void); // for reading the receiver
 void Receiver_Init(void);
 
-uint8_t IR_read(uint8_t *address, uint8_t *command);
+uint8_t IR_read(uint8_t *adr, uint8_t *cmd);
 
 #endif /* IR_H_ */
