@@ -126,14 +126,24 @@ void Timer2_Init(void)
 	TIMSK2 |= (1 << OCIE2A);// enable timer COMPA interrupt
 }
 
-uint8_t IR_read(uint8_t *address, uint8_t *command)
+uint8_t IR_read(uint8_t *adr, uint8_t *cmd)
 {
 	if(!IR_rawdata) // if there is no read data
 	{
 		return IR_ERROR;
 	}
-	*address = IR_rawdata;// last byte of the 32 bit message (the inverted -> correct data)
-	*command = IR_rawdata >> 16;// second byte of the 32 bit message (also the inverted part)
+	/*uint8_t tmp_adr = IR_rawdata;// last byte of the 32 bit message (the inverted -> correct data)
+	uint8_t tmp_cmd = IR_rawdata >> 16;// second byte of the 32 bit message (also the inverted part)
+	uint8_t i = 0;
+	for (i = 0; i < 8; i++)
+	{
+		if ()
+		{
+		}
+	}
+	// here, original MSB is on the last bit of the rawdata*/
+	*cmd = IR_rawdata >> 8;// third byte of the 32 bit message (the inverted -> correct data)
+	*adr = IR_rawdata >> 24;// first byte of the 32 bit message (also the inverted part)
 	IR_rawdata = 0;
 	
 	return IR_SUCCESS;
@@ -167,7 +177,8 @@ static uint8_t IR_NEC_process(uint16_t counter, uint8_t value)// static function
 		{
 			if(value == HIGH)
 			{
-				IR_data |= ((uint32_t)((counter < 90) ? 0 : 1) << IR_index++);
+				IR_data |= ((uint32_t)((counter < 90) ? 0 : 1) << (31 - IR_index));
+				IR_index++;
 				if (IR_index == 32) 
 				{
 					IR_proto_event = IR_PROTO_EVENT_HOOK;
